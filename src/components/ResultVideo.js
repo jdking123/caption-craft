@@ -1,3 +1,4 @@
+'use client';
 import SparklesIcon from "@/components/SparklesIcon";
 import {transcriptionItemsToSrt} from "@/libs/awsTranscriptionHelpers";
 import {FFmpeg} from "@ffmpeg/ffmpeg";
@@ -6,7 +7,7 @@ import {useEffect, useState, useRef} from "react";
 import roboto from './../fonts/Roboto-Regular.ttf';
 import robotoBold from './../fonts/Roboto-Bold.ttf';
 
-export default function ResultVideo({filename,transcriptionItems}) {
+export default function ResultVideo({filename, transcriptionItems}) {
   const videoUrl = `${process.env.NEXT_PUBLIC_VIDEO_BASE_URL}${filename}`;
   const [loaded, setLoaded] = useState(false);
   const [primaryColor, setPrimaryColor] = useState('#FFFFFF');
@@ -18,7 +19,7 @@ export default function ResultVideo({filename,transcriptionItems}) {
   useEffect(() => {
     videoRef.current.src = videoUrl;
     load();
-  }, []);
+  }, [videoUrl]);  // Add videoUrl as a dependency
 
   const load = async () => {
     const ffmpeg = ffmpegRef.current;
@@ -30,10 +31,10 @@ export default function ResultVideo({filename,transcriptionItems}) {
     await ffmpeg.writeFile('/tmp/roboto.ttf', await fetchFile(roboto));
     await ffmpeg.writeFile('/tmp/roboto-bold.ttf', await fetchFile(robotoBold));
     setLoaded(true);
-  }
+  };
 
   function toFFmpegColor(rgb) {
-    const bgr = rgb.slice(5,7) + rgb.slice(3,5) + rgb.slice(1,3);
+    const bgr = rgb.slice(5, 7) + rgb.slice(3, 5) + rgb.slice(1, 3);
     return '&H' + bgr + '&';
   }
 
@@ -43,7 +44,7 @@ export default function ResultVideo({filename,transcriptionItems}) {
     await ffmpeg.writeFile(filename, await fetchFile(videoUrl));
     await ffmpeg.writeFile('subs.srt', srt);
     videoRef.current.src = videoUrl;
-    await new Promise((resolve, reject) => {
+    await new Promise((resolve) => {
       videoRef.current.onloadedmetadata = resolve;
     });
     const duration = videoRef.current.duration;
@@ -51,7 +52,7 @@ export default function ResultVideo({filename,transcriptionItems}) {
       const regexResult = /time=([0-9:.]+)/.exec(message);
       if (regexResult && regexResult?.[1]) {
         const howMuchIsDone = regexResult?.[1];
-        const [hours,minutes,seconds] = howMuchIsDone.split(':');
+        const [hours, minutes, seconds] = howMuchIsDone.split(':');
         const doneTotalSeconds = hours * 3600 + minutes * 60 + seconds;
         const videoProgress = doneTotalSeconds / duration;
         setProgress(videoProgress);
@@ -67,7 +68,7 @@ export default function ResultVideo({filename,transcriptionItems}) {
     videoRef.current.src =
       URL.createObjectURL(new Blob([data.buffer], {type: 'video/mp4'}));
     setProgress(1);
-  }
+  };
 
   return (
     <>
@@ -82,15 +83,15 @@ export default function ResultVideo({filename,transcriptionItems}) {
       <div className="flex">
         Primary color:
         <input type="color"
-               className=" rounded border border-white"
+               className="rounded border border-white"
                value={primaryColor}
                onChange={ev => setPrimaryColor(ev.target.value)}/>
         <br />
-        </div>
-        <div className="flex mt-1 mb-2 ">
+      </div>
+      <div className="flex mt-1 mb-2 ">
         Outline color :
         <input type="color"
-               className=" rounded border border-white"
+               className="rounded border border-white"
                value={outlineColor}
                onChange={ev => setOutlineColor(ev.target.value)}/>
       </div>
@@ -100,7 +101,7 @@ export default function ResultVideo({filename,transcriptionItems}) {
             <div className="w-full text-center">
               <div className="bg-bg-gradient-from/50 mx-8 rounded-lg overflow-hidden relative">
                 <div className="bg-bg-gradient-from h-8"
-                     style={{width:progress * 100+'%'}}>
+                     style={{width: progress * 100 + '%'}}>
                   <h3 className="text-white text-xl absolute inset-0 py-1">
                     {parseInt(progress * 100)}%
                   </h3>
@@ -110,7 +111,7 @@ export default function ResultVideo({filename,transcriptionItems}) {
           </div>
         )}
         <video
-        className="border-2 broder-white"
+          className="border-2 broder-white"
           data-video={0}
           ref={videoRef}
           controls>
