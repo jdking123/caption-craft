@@ -31,30 +31,9 @@ a {
                  0 0 5px rgba(255, 255, 255, 0.4); 
 }
 
-@keyframes stars {
-    0% {
-        background-position: 0 0;
-    }
-    100% {
-        background-position: -1000px 1000px;
-    }
-}
-
+/* Removed background animation for starry background */
 .starry-background {
-    background: black url('/path/to/starry-background.png') repeat;
-    background-size: contain;
-    animation: stars 60s linear infinite;
-}
-
-@keyframes fall-diagonal {
-    0% {
-        transform: translate(-200px, -200px);
-        opacity: 1;
-    }
-    100% {
-        transform: translate(100vw, 100vh);
-        opacity: 0;
-    }
+    background: black;
 }
 
 .stars {
@@ -76,17 +55,13 @@ a {
     height: 2px;
     border-radius: 50%;  
     box-shadow: 0 0 4px 2px white;  
-    animation: fall-diagonal linear infinite;
     opacity: 0;
 }
 
-.star:nth-child(odd) {
-    animation-duration: 5s;
-}
-
+/* Removed animations for falling stars */
+.star:nth-child(odd),
 .star:nth-child(even) {
-    animation-duration: 7s;
-    animation-delay: 1s;
+    animation: none;
 }
 
 .hover\:scale-110:hover {
